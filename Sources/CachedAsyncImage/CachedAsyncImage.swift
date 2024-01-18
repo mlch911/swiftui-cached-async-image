@@ -293,9 +293,10 @@ public struct CachedAsyncImage<Content>: View where Content: View {
     ///   - transaction: The transaction to use when the phase changes.
     ///   - content: A closure that takes the load phase as an input, and
     ///     returns the view to display for the specified phase.
-    public init(urlRequest: URLRequest?, urlCache: URLCache = .shared, scale: CGFloat = 1, transaction: Transaction = Transaction(), @ViewBuilder content: @escaping (AsyncImagePhase) -> Content) {
-        let configuration = URLSessionConfiguration.default
+    public init(urlRequest: URLRequest?, urlCache: URLCache = .shared, scale: CGFloat = 1, transaction: Transaction = Transaction(), urlSessionConfigurationBlock: ((inout URLSessionConfiguration)->())? = nil, @ViewBuilder content: @escaping (AsyncImagePhase) -> Content) {
+        var configuration = URLSessionConfiguration.default
         configuration.urlCache = urlCache
+        urlSessionConfigurationBlock?(&configuration)
         self.urlRequest = urlRequest
         self.urlSession =  URLSession(configuration: configuration)
         self.scale = scale
